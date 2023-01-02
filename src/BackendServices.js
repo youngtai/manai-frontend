@@ -16,10 +16,8 @@ const zippedFiles = (files) => {
 
 class Service {
   async uploadFiles(files) {
-    const zipped = zippedFiles(files);
-    const zipFile = await zipped.generateAsync({type: 'blob'});
+    const zipFile = await zippedFiles(files).generateAsync({type: 'blob'});
     const data = new FormData();
-    // files.forEach((file, index) => data.append(`image-${index}`, file, file.name));
     data.append('images', zipFile, 'zipped-images.zip');
     return fetch(`${ROOT}/file-upload`, {method: 'POST', body: data})
       .then(response => {
