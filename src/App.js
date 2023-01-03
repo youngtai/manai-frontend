@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import DrawerAppBar from "./DrawerAppBar.js";
+import DrawerAppBar from "./components/DrawerAppBar.js";
 import TrainPage from './pages/TrainPage.js';
 
 export default function App() {

@@ -36,7 +36,7 @@ class Service {
         if (response.ok) {
           return response;
         } else {
-          const errorMessage = `Error starting traing`;
+          const errorMessage = `Error starting training`;
           return Promise.reject(errorMessage);
         }
       });
