@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Button, Container, Grid, ImageList, ImageListItem, Typography} from "@mui/material";
-import FileUpload from './FileUpload.js';
+import FileUpload from '../FileUpload.js';
 import {styled} from "@mui/material/styles";
-import Service from './BackendServices.js';
+import Service from '../BackendServices.js';
 
 const RootContainer = styled('div')(({ theme }) => ({
   marginLeft: theme.spacing(4),
