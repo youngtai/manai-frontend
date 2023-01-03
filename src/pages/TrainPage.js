@@ -14,7 +14,6 @@ const RootContainer = styled('div')(({ theme }) => ({
 const SERVICES = new Service();
 
 function TrainPage() {
-
   const [files, setFiles] = React.useState([]);
   const [imagesUploaded, setImagesUploaded] = React.useState(false);
 
