@@ -86,7 +86,7 @@ function DrawerAppBar(props) {
               {navItems.map((item, index) => <ButtonLink key={`buttonLink-${index}`} to={`/${item}`} primary={item}/>)}      
             </Box>
             </Toolbar>
-        </AppBar>
+        </AppBar>    
         <Box component="nav">
             <Drawer
             container={container}

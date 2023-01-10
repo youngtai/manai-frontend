@@ -42,8 +42,8 @@ class Service {
       });
   }
 
-  async doInference() {
-    return fetch(`${ROOT}/inference`)
+  async doInference(text_prompt) {
+    return fetch(`${ROOT}/inference`, {method: 'POST', body: text_prompt})
       .then(response => {
         if (response.ok) {
           return response;
