@@ -48,7 +48,10 @@ function DrawerAppBar(props) {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
+      <Typography 
+        component={React.forwardRef((itemProps, ref) => <Link to={'/'} ref={ref} {...itemProps}/>)}
+        variant="h6" 
+        sx={{ my: 2 }}>
         manai project
       </Typography>
       <Divider />
@@ -77,7 +80,7 @@ function DrawerAppBar(props) {
             </IconButton>
             <Typography
                 variant="h5"
-                component="div"
+                component={React.forwardRef((itemProps, ref) => <Link to={'/'} ref={ref} {...itemProps}/>)}
                 sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
             >
                 manai project
