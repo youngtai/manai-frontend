@@ -1,18 +1,28 @@
-import React from "react";
+import {useState} from "react";
 import { ThemeProvider } from '@mui/material';
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import DrawerAppBar from "./components/DrawerAppBar.js";
 import TrainPage from './pages/TrainPage.js';
 import CreatePage from './pages/CreatePage.js';
 import HomePage from './pages/HomePage.js';
-import { appTheme } from './themes/Theme.js';
+import { lightTheme, darkTheme } from './themes/Theme.js';
 
 export default function App() {
+  const [theme, setTheme] = useState(lightTheme);
+
+  function handleThemeChange(checkState) {
+    if (checkState) {
+      setTheme(darkTheme);
+    } else {
+      setTheme(lightTheme);
+    }
+  }
+
   return (
-    <ThemeProvider theme={appTheme}>
+    <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          <Route path="/" element={<DrawerAppBar/>}>
+          <Route path="/" element={<DrawerAppBar onThemeChange={handleThemeChange}/>}>
             <Route index element={<HomePage/>}/>
             <Route path="/train" element={<TrainPage/>}/>
             <Route path="/create" element={<CreatePage/>}/>

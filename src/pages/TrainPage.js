@@ -32,10 +32,10 @@ function TrainPage() {
     <RootContainer>
       <Container>
         <Typography variant='h5'>
-          Train a fine-tune model
+          Train a text-to-image model
         </Typography>
         <Typography variant='h6'>
-          Upload your images
+          Images files should be named with the corresponding text prompt
         </Typography>
         <Grid container direction='row' alignItems='center'>
           <Grid item>
