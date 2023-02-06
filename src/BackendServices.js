@@ -1,7 +1,9 @@
 import JSZip from "jszip";
 
-const ROOT = 'http://localhost:5000';
 const jsZip = new JSZip();
+
+// const ROOT = 'http://192.168.86.28:5000';
+const ROOT = 'http://localhost:5000';
 
 const zippedFiles = (files) => {
   if (!files || files.length === 0) {
@@ -42,15 +44,33 @@ class Service {
       });
   }
 
-  async doInference(text_prompt) {
-    return fetch(`${ROOT}/inference`, {method: 'POST', body: text_prompt})
+  async doInference(text_prompt, params) {    
+    const queryParams = Object.keys(params)
+      .map(key => params[key] ? `${key}=${params[key]}` : null)
+      .filter(e => e)
+      .join('&');
+    
+    return fetch(`${ROOT}/inference?${queryParams}`, {method: 'POST', body: text_prompt})
       .then(response => {
         if (response.ok) {
-          return response;
+          return response.arrayBuffer();
         } else {
-          const errorMessage = `Erroring running inference`;
+          const errorMessage = `Error running inference`;
           return Promise.reject(errorMessage);
         }
+      })
+      .then(buf => new JSZip().loadAsync(buf))
+      .then(zip => {
+        const imageBlobs = [];
+        const imageDetails = [];
+        zip.forEach((filename, file) => {
+          if (filename.endsWith('.png')) {
+            file.async('blob').then(blob => imageBlobs.push(blob));
+          } else if (filename.endsWith('.json')) {
+            file.async('text').then(detailsString => imageDetails.push(JSON.parse(detailsString)));
+          }
+        });
+        return {imageBlobs, imageDetails};
       });
   }
 }

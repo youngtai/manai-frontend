@@ -1,5 +1,5 @@
-import * as React from 'react';
-import {Button, Container, Grid, ImageList, ImageListItem, TextField, Typography} from "@mui/material";
+import {useState} from 'react';
+import {Button, Container, Grid, ImageList, ImageListItem, Skeleton, Stack, TextField, Typography} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import Service from '../BackendServices';
 
@@ -12,51 +12,118 @@ const RootContainer = styled('div')(({ theme }) => ({
 
 const SERVICES = new Service();
 
-function CreatePage() {
-  const [prompt, setPrompt] = React.useState('');
-  const [createdImages, setCreatedImages] = React.useState([1, 2, 3, 4]);
+const skeleton = (
+  <Container>
+    <Grid container direction='row' spacing={2} justifyContent='center'>
+      <Grid item>
+        <Stack spacing={1}>
+          <Skeleton variant='rectangular' width={256} height={256}/>
+          <Skeleton variant='rectangular' width={256} height={256}/>
+          <Skeleton variant='rectangular' width={256} height={256}/>
+        </Stack>
+      </Grid>
+      <Grid item>
+        <Stack spacing={1}>
+          <Skeleton variant='rectangular' width={256} height={256}/>
+          <Skeleton variant='rectangular' width={256} height={256}/>
+          <Skeleton variant='rectangular' width={256} height={256}/>
+        </Stack>
+      </Grid>
+    </Grid>
+  </Container>
+);
 
-  const createImages = async () => {
-    const response = await SERVICES.do_inference(prompt);
+function ImagesDisplay({createdImages}) {
+  return (
+    <ImageList>
+      {
+        createdImages.map((blob, idx) => (
+          <ImageListItem key={`image-${idx}`}>
+            <img
+              src={URL.createObjectURL(blob)}
+              loading="lazy"
+              alt='title'
+            />
+          </ImageListItem>
+        ))
+      }
+    </ImageList>
+  );
+}
+
+function CreatePage() {
+  const [prompt, setPrompt] = useState('');
+  const [model, setModel] = useState('dreamshaper');
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+  const [samples, setSamples] = useState(1);
+  const [sampler, setSampler] = useState('euler');
+  const [seed, setSeed] = useState('');
+  
+  const [createdImages, setCreatedImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const params = {
+    ckpt: model,
+    w: width,
+    h: height,
+    samples: samples,
+    sampler: sampler,
+    seed: seed
   };
+   
+  async function handleCreateImages() {
+    setLoading(true);
+    const {imageBlobs, imageDetails} = await SERVICES.doInference(prompt, params);
+    setCreatedImages(imageBlobs);
+    setLoading(false);
+  }
 
   return (
     <RootContainer>
-      <Container>
-        <Typography variant='h5'>
-          Describe your image with words
-        </Typography>
-        <Grid container direction='row' alignItems='center' spacing={3}>
-          <Grid item xs={10}>
-            <TextField
-              required
-              label='A cool idea ...'
-              onChange={e => setPrompt(e.target.value)}
-              fullWidth
-              sx={{marginY: 2}}
-            />
-          </Grid>
-          <Grid item xs={2}>
-            <Button variant='outlined' onClick={createImages}>
-              Create Images
-            </Button>
+      <Typography variant='h5'>
+        Describe your image with words
+      </Typography>
+      <TextField
+        required
+        label='A cool idea ...'
+        onChange={e => setPrompt(e.target.value)}
+        fullWidth
+        sx={{marginY: 1}}
+      />
+      <Grid container direction='column' spacing={1}>
+        <Grid item>
+          <Grid container direction='row' alignItems='center' spacing={1} justifyContent='align-left'>
+            <Grid item>
+              <TextField label='Model' onChange={e => setModel(e.target.value)} value={model}/>
+            </Grid>
+            <Grid item>
+              <TextField label='Width' onChange={e => setWidth(e.target.value)} value={width}/>
+            </Grid>
+            <Grid item>
+              <TextField label='Height' onChange={e => setHeight(e.target.value)} value={height}/>
+            </Grid>
+            <Grid item>
+              <TextField label='# of Images to Create' onChange={e => setSamples(e.target.value)} value={samples}/>
+            </Grid>
+            <Grid item>
+              <TextField label='Sampler' onChange={e => setSampler(e.target.value)} value={sampler}/>
+            </Grid>
+            <Grid item>
+              <TextField label='Seed' onChange={e => setSeed(e.target.value)} value={seed}/>
+            </Grid>
           </Grid>
         </Grid>
-        <Typography variant='h6' hidden={prompt === '' && createdImages.length > 0}>
-          {`Images from "${prompt}"`}
-        </Typography>
-        <ImageList>
-          {createdImages.map((file, idx) => (
-            <ImageListItem key={`image-${idx}`}>
-              <img
-                src={null}
-                alt={`Dummy image`}
-                loading="lazy"
-              />
-            </ImageListItem>
-          ))}
-        </ImageList>
-      </Container>
+        <Grid item>
+          <Button variant='contained' onClick={handleCreateImages}>
+            Create
+          </Button>
+        </Grid>
+      </Grid>
+      <Typography variant='h6' hidden={prompt === '' && createdImages.length > 0}>
+        {createdImages.length === 0 ? null : `Images for: "${prompt}"`}
+      </Typography>
+      {loading ? skeleton : <ImagesDisplay createdImages={createdImages}/>}
     </RootContainer>
   );
 }

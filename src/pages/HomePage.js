@@ -15,7 +15,7 @@ export default function HomePage() {
     <RootContainer>
       <Container>
         <Typography>
-          Connecting human creators with AI tools...
+          Humans + AI = !!!
         </Typography>
       </Container>
     </RootContainer>
