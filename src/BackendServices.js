@@ -60,16 +60,19 @@ class Service {
         }
       })
       .then(buf => new JSZip().loadAsync(buf))
-      .then(zip => {
+      .then(async zip => {
         const imageBlobs = [];
         const imageDetails = [];
-        zip.forEach((filename, file) => {
-          if (filename.endsWith('.png')) {
-            file.async('blob').then(blob => imageBlobs.push(blob));
-          } else if (filename.endsWith('.json')) {
-            file.async('text').then(detailsString => imageDetails.push(JSON.parse(detailsString)));
+        const zipFilesList = Object.keys(zip.files).map(key => zip.files[key]);
+        for (const file of zipFilesList) {
+          if (file.name.endsWith('.png')) {
+            const blob = await file.async('blob');
+            imageBlobs.push(blob);
+          } else if (file.name.endsWith('.json')) {
+            const text = await file.async('text');
+            imageDetails.push(JSON.parse(text));
           }
-        });
+        }
         return {imageBlobs, imageDetails};
       });
   }
